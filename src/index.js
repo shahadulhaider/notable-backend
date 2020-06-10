@@ -1,69 +1,14 @@
 const express = require('express');
-const { ApolloServer, gql } = require('apollo-server-express');
+const { ApolloServer } = require('apollo-server-express');
 require('dotenv').config();
 
 const db = require('./db');
 const models = require('./models');
+const typeDefs = require('./graphql/schema');
+const resolvers = require('./graphql/resolvers');
 
 const { DB_HOST } = process.env;
 const port = process.env.PORT || 4000;
-
-// const notes = [
-//   {
-//     id: '1',
-//     content: 'This is a note',
-//     author: 'Albert Einstein',
-//   },
-//   {
-//     id: '2',
-//     content: 'This is another note',
-//     author: 'Enrico Fermi',
-//   },
-//   {
-//     id: '3',
-//     conent: 'This is a notation',
-//     author: 'Mark Anthony',
-//   },
-// ];
-
-// Construct a schema using GraphQL's schema language
-const typeDefs = gql`
-  type Note {
-    id: ID
-    content: String
-    author: String
-  }
-
-  type Query {
-    hello: String
-    notes: [Note]
-    note(id: ID): Note
-  }
-
-  type Mutation {
-    newNote(content: String): Note
-  }
-`;
-
-const resolvers = {
-  Query: {
-    hello: () => 'Hello from GraphQL',
-    notes: async () => {
-      return await models.Note.find();
-    },
-    note: async (parent, args) => {
-      return await models.Note.findById(args.id);
-    },
-  },
-  Mutation: {
-    newNote: async (parent, args) => {
-      return await models.Note.create({
-        content: args.content,
-        author: 'Albert Einstein',
-      });
-    },
-  },
-};
 
 const app = express();
 
@@ -71,7 +16,13 @@ const app = express();
 db.connect(DB_HOST);
 
 // Apollo server setup
-const server = new ApolloServer({ typeDefs, resolvers });
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: () => {
+    return { models };
+  },
+});
 
 // Apollo middleware and set path to api
 server.applyMiddleware({ app, path: '/api' });
