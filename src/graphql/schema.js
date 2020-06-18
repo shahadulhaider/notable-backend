@@ -6,20 +6,37 @@ const typeDefs = gql`
   type Note {
     id: ID!
     content: String!
-    author: String!
+    author: User!
+    favoriteCount: Int!
+    favoritedBy: [User]
     createdAt: DateTime!
     updatedAt: DateTime!
+  }
+
+  type User {
+    id: ID!
+    username: String!
+    email: String!
+    avatar: String
+    notes: [Note!]!
+    favorites: [Note!]!
   }
 
   type Query {
     notes: [Note!]!
     note(id: ID!): Note!
+    user(username: String!): User
+    users: [User!]!
+    me: User!
   }
 
   type Mutation {
     newNote(content: String!): Note!
     updateNote(id: ID!, content: String!): Note!
     deleteNote(id: ID!): Boolean!
+    toggleFavorite(id: ID!): Note!
+    signup(username: String!, email: String!, password: String!): String!
+    signin(username: String, email: String, password: String!): String!
   }
 `;
 

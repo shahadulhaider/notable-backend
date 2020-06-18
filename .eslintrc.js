@@ -13,5 +13,6 @@ module.exports = {
     'no-console': 'off',
     'no-unused-vars': 'off',
     'no-return-await': 'off',
+    'no-underscore-dangle': 'off',
   },
 };
