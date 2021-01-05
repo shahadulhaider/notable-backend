@@ -28,7 +28,7 @@ module.exports = {
 
     const note = await models.Note.findById(id);
 
-    if (note && note.author !== user.id) {
+    if (note && String(note.author) !== user.id) {
       throw new ForbiddenError(
         'You do not have permission to update the note.',
       );

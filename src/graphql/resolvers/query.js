@@ -14,6 +14,7 @@ module.exports = {
   me: async (parent, args, { models, user }) => {
     return await models.User.findById(user.id);
   },
+  // FIXME cursor
   noteFeed: async (parent, { cursor }, { models }) => {
     const limit = 10;
     let hasNextPage = false;
